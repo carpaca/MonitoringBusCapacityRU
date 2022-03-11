@@ -4,6 +4,8 @@ from multiprocessing import Process, Queue
 from transloc import transloc
 from EvoPeopleCounter import EvoPeopleCounter
 
+#run sensor and get latest reading
+
 def read_sensor():
     capacity = None
     while True:
