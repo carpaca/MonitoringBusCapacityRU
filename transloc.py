@@ -22,7 +22,7 @@ class transloc:
         self.querystring = {"agencies": "1323", "callback": "call"}
         self.headers = {
         'x-rapidapi-host': "transloc-api-1-2.p.rapidapi.com",
-        'x-rapidapi-key': "bd2742fe0bmshb1a756f4de0628fp1c01a2jsn774567dec941"
+        'x-rapidapi-key': 'API KEY'
         }
         #self.conn = sqlite3.connect('test.db')
         #self.c = self.conn.cursor()
