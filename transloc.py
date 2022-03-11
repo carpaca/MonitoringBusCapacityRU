@@ -4,7 +4,7 @@ import json
 import time
 from datetime import datetime
 
-conn = sqlite3.connect('test.db')
+conn = sqlite3.connect('capstone.db')
 c = conn.cursor()
 
 """transloc object that puts information into database.
@@ -51,7 +51,7 @@ class transloc:
 
         for ct in range(0, len(resp_vehicles['data']['1323'])):
             c.execute(
-                "INSERT OR REPLACE INTO TEST_TABLE VALUES (:ID, :vehicleID, :capacity, :routeID)",
+                "INSERT OR REPLACE INTO VEHICLES VALUES (:ID, :vehicleID, :capacity, :routeID)",
                 {'ID': ID_idx,
                  'vehicleID': resp_vehicles['data']['1323'][ct]['call_name'],
                  'capacity': capacity,
@@ -69,53 +69,12 @@ class transloc:
         # input data from get_agency to ROUTE table
         for ct1 in range(len(resp_agency['data']['1323'])):
             stop_st = ' '.join(resp_agency['data']['1323'][ct1]['stops'])
-            c.execute("INSERT OR REPLACE INTO TEST_ROUTES VALUES (:ID, :routeID, :routeNAME)",
+            c.execute("INSERT OR REPLACE INTO ROUTES VALUES (:ID, :routeID, :routeNAME)",
                       {'ID': ID_idx1,
                        'routeID': resp_agency['data']['1323'][ct1]['route_id'],
                        'routeNAME': resp_agency['data']['1323'][ct1]['long_name'],
                        })
             ID_idx1 = ID_idx1 + 1
-            conn.commit()
-
-    def input_busses(self):
-        resp_vehicles = self.vehicles()
-
-        ID_idx2 = 1
-        # stop_list = []
-        # resp_vehicles['data']['1323'][ct2]['arrival_estimates'][0]['stop_id']
-        for ct2 in range(len(resp_vehicles['data']['1323'])):
-            stop_list = []
-            arrive_list = []
-            for idx in range(len(resp_vehicles['data']['1323'][ct2]['arrival_estimates'])):
-                stop_list.append(resp_vehicles['data']['1323'][ct2]['arrival_estimates'][idx]['stop_id'])
-                arrive_list.append(resp_vehicles['data']['1323'][ct2]['arrival_estimates'][idx]['arrival_at'])
-                stop_string = ' '.join(stop_list)
-                arrive_string = ' '.join(arrive_list)
-                # print(stop_list)
-            if len(resp_vehicles['data']['1323'][ct2]['arrival_estimates']) >= 1:
-                c.execute(
-                    "INSERT OR REPLACE INTO BUSSES VALUES (:ID, :vehicle_number, :capacity, :route, :stop, :arrivals, :lat, :long)",
-                    {'ID': ID_idx2,
-                     'vehicle_number': resp_vehicles['data']['1323'][ct2]['vehicle_id'],
-                     'capacity': 0,
-                     'route': resp_vehicles['data']['1323'][ct2]['route_id'],
-                     'stop': stop_string,
-                     'arrivals': arrive_string,
-                     'lat': resp_vehicles['data']['1323'][ct2]['location']['lat'],
-                     'long': resp_vehicles['data']['1323'][ct2]['location']['lng']})
-            else:
-                c.execute(
-                    "INSERT OR REPLACE INTO BUSSES VALUES (:ID, :vehicle_number, :capacity, :route, :stop, :arrivals, :lat, :long)",
-                    {'ID': ID_idx2,
-                     'vehicle_number': resp_vehicles['data']['1323'][ct2]['vehicle_id'],
-                     'capacity': 0,
-                     'route': resp_vehicles['data']['1323'][ct2]['route_id'],
-                     'stop': 'none',
-                     'arrivals': ' ',
-                     'lat': resp_vehicles['data']['1323'][ct2]['location']['lat'],
-                     'long': resp_vehicles['data']['1323'][ct2]['location']['lng']})
-
-            ID_idx2 = ID_idx2 + 1
             conn.commit()
 
     def input_stops(self):
@@ -141,7 +100,7 @@ class transloc:
         #wait_time = 10
         #itt = 1
         #print('capacity = ', capacity)
-        c.execute("DELETE FROM TEST_ROUTES;")
+        c.execute("DELETE FROM ROUTES;")
         #print("here")
         self.input_agency()
 
@@ -149,7 +108,7 @@ class transloc:
         self.input_stops()
 
     #while True:
-        c.execute("DELETE FROM TEST_TABLE;",)
+        c.execute("DELETE FROM VEHICLES;",)
         #c.execute("DELETE FROM BUSSES;",)
         conn.commit
 

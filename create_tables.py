@@ -1,15 +1,15 @@
 import sqlite3
 
-conn = sqlite3.connect('test.db')
+conn = sqlite3.connect('capstone.db')
 c = conn.cursor()
 
 """create database tables"""
 
 #c.execute("DROP TABLE TEST_TABLE")
 #c.execute("DROP TABLE STOPS")
-c.execute("DROP TABLE USERS")
-c.execute("DROP TABLE TEST_ROUTES")
-c.execute("DROP TABLE BUSSES")
+#c.execute("DROP TABLE USERS")
+#c.execute("DROP TABLE TEST_ROUTES")
+#c.execute("DROP TABLE BUSSES")
 
 c.execute("""CREATE TABLE STOPS(
             ID integer,
@@ -18,14 +18,14 @@ c.execute("""CREATE TABLE STOPS(
             PRIMARY KEY(ID)
             )""")
 
-c.execute("""CREATE TABLE TEST_ROUTES(
+c.execute("""CREATE TABLE ROUTES(
             ID integer,
             routeID integer,
             routeName integer,
             PRIMARY KEY(ID)
             )""")
 
-c.execute("""CREATE TABLE TEST_TABLE(
+c.execute("""CREATE TABLE VEHICLES(
             ID integer,
             vehicleID integer,
             capacity integer,
