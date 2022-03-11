@@ -4,8 +4,6 @@ from multiprocessing import Process, Queue
 from transloc import transloc
 from EvoPeopleCounter import EvoPeopleCounter
 
-"""run sensor and update tables at the same time"""
-
 def read_sensor():
     capacity = None
     while True:
@@ -14,7 +12,7 @@ def read_sensor():
             capacity = data[0]
             sensor_queue.put(capacity)
             #capacity_prev = capacity
-            #print(capacity)
+            print(capacity)
         else:
             #sensor_queue.put(capacity)
             continue
@@ -44,7 +42,7 @@ def input_data():
         t_diff = t_diff.total_seconds()
         #print(t_diff)
 
-        if t_diff >= 60:
+        if t_diff >= 5:
             print("time has passed: ", t_diff, cap_list)
             t_current = datetime.now()
             if len(cap_list) == 0:
@@ -65,8 +63,8 @@ def input_data():
 
 
 if __name__ == '__main__':
-    sensor = EvoPeopleCounter() #sensor object
-    trans = transloc() 
+    sensor = EvoPeopleCounter()
+    trans = transloc()
     sensor_queue = Queue()
 
     read_process = Process(target=read_sensor)
