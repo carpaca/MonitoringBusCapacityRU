@@ -1,94 +1,126 @@
 import sqlite3
-con = sqlite3.connect('example.db')
-cur = con.cursor() 
+import time
+from datetime import datetime as dt
+from twilio.rest import Client
 
-def contact_tracing(student_id):
-	for bus_id in get_student(student_id)['buslist'].split(','):
-		for student in get_passengers(bus_id)['netid']:
-			notify(student)
+con = sqlite3.connect('capstone.db', check_same_thread=False)
+cur = con.cursor()
+
+def contact_tracing(netid):
+	#add items to see if students are on bus at the same time
+	contact_list = {}
+	student_list = []
+	bus, date, on, off = get_buslist(netid)
+	for i in range(len(bus)):
+		print("\ntracing bus",bus[i],"\n", flush=True)
+		for student in get_passengers(bus[i]):
+			b, d, n, f = get_buslist(student)
+			for j in range(len(b)):
+				if bus[i] == b[j]:
+					if check_overlap(time.strptime(date[i],"%Y-%m-%d"), time.strptime(on[i],"%H:%M:%S"), time.strptime(off[i],"%H:%M:%S"), time.strptime(d[j],"%Y-%m-%d"), time.strptime(n[j],"%H:%M:%S"), time.strptime(f[j],"%H:%M:%S")):
+						if student[0] != netid:
+							contact_list[student] = [bus[i], date[i]]
+							student_list.append(student[0])
+							result = cur.execute('SELECT COVID FROM USERS WHERE netID = ?', (netid,)).fetchone()[0]
+							if result == 1:
+								notify(student[0])
+							else:
+								continue
+						else:
+							continue
+	return contact_list, student_list
+
+def notify(netid):
+	#twlio goes here
+	print(netid)
+	account_sid = 'AC19fc5049169130ebe290e252b3dc8617'
+	auth_token = '723edabc5cc3933294d263436bc99a05'
+	client = Client(account_sid, auth_token)
+
+	result = cur.execute('SELECT COVID, phone_num FROM USERS WHERE netID = ?', (netid,)).fetchone()
+	covid = result[0]
+	phone = result[1]
+
+	#send message
+	message = client.messages.create(
+		messaging_service_sid='MGf67d763cc479f499f28fd8f1745cc857',
+		body='You have been in contact with someone who has tested positive for COVID-19',
+		to=phone
+	)
+
+	print(message.sid)
+	print('message sent to', netid)
+
+	return
+
+def get_buslist(netid):
+	print("\ntracing student",netid,"\n", flush=True)
+	student = get_student(netid)
+	bus = student[6].split(',')
+	date = student[8].split(',')
+	on = student[9].split(',')
+	off = student[10].split(',')
+	return bus, date, on, off
 
 def get_student(netid):
-	return cur.execute('select * from students where netid=:i', {'i': netid}).fetchone()
+	return cur.execute("select * from USERS where netID = '%s'" %(netid)).fetchone()
 
 def get_passengers(id):
-	return cur.execute('select * from students where buslist like i', {'i': id}).fetchall()
+	print(cur.execute("select netID from USERS where vehicle like '%s'" %('%'+id+'%')).fetchall())
+	return cur.execute("select netID from USERS where vehicle like '%s'" %('%'+id+'%')).fetchall()
 
-def get_bus(id):
-	return cur.execute('select * from busses where id=:i', {'i': id}).fetchone()
+def got_on_bus(vehicle_id, netid):
+	bus, date, on, off = get_buslist(netid)
+	time = dt.now()
+	bus = bus.append(vehicle_id)
+	date = date.append('%d-%d-%d' %(time.year,time.day,time.month))
+	on = on.append('%d:%d:%d' %(time.hour,time.minute,time.second))
+	off = off.append('%d:%d:%d' %(time.hour,time.minute,time.second))
+	b = ",".join(bus)
+	d = ",".join(date)
+	o1 = ",".join(on)
+	o2 = ",".join(off)
+	cur.execute("update USERS set vehicle = '%s'" (b))
+	cur.execute("update USERS set vehicle = '%s'" (d))
+	cur.execute("update USERS set time_on = '%s'" (o1))
+	cur.execute("update USERS set time_off = '%s'" (o2))
 
-def get_route(id):
-	return cur.execute('select * from routes where id=:i', {'i': id}).fetchone()
+def undo_get_on_bus(vehicle_id, netid):
+	time = dt.now()
+	dat
+	bus, date, on, off = get_buslist(netid)
+	if bus[-1] == vehicle_id:
+		del bus[-1]
+		del date[-1]
+		del on[-1]
+		del off[-1]
+		b = ",".join(bus)
+		d = ",".join(date)
+		o1 = ",".join(on)
+		o2 = ",".join(off)
+		cur.execute("update USERS set vehicle = '%s'" (b))
+		cur.execute("update USERS set vehicle = '%s'" (d))
+		cur.execute("update USERS set time_on = '%s'" (o1))
+		cur.execute("update USERS set time_off = '%s'" (o2))
 
-def get_stop_ids_on_route(id):
-	return get_route(id)['stops'].split(',')
+def got_off_bus(vehicle_id, netid):
+	#map get off bus time
+	bus, date, on, off = get_buslist(netid)
+	if bus[-1] == vehicle_id:
+		off[-1] = '%d:%d:%d' %(time.hour,time.minute,time.second)
+		o = ",".join(off)
+		cur.execute("update USERS set time_off = '%s'" (o2))
 
-def get_stop(id):
-	return cur.execute('select * from stops where netid=:i', {'i': id}).fetchone()
+def check_overlap(d1, n1, x1, d2, n2, x2):
+	return (d1==d2 and (((n1 <= x2) and (x1 >= x2)) or ((n2 <= x1) and (x2 >= x1))))
 
-def update_busses():
-
-def input_vehicles(self, capacity):
-	def __init__(self):
-    response = requests.request("GET", "https://transloc-api-1-2.p.rapidapi.com/vehicles.json", headers={'x-rapidapi-host': "transloc-api-1-2.p.rapidapi.com",'x-rapidapi-key': "bd2742fe0bmshb1a756f4de0628fp1c01a2jsn774567dec941"}, params={"agencies": "1323", "callback": "call"})
-    resp_vehicles = json.loads(response.text.encode('utf8'))
-    ID_idx = 1
-
-    for ct in range(0, len(resp_vehicles['data']['1323'])):\
-        curr_routeID = resp_vehicles['data']['1323'][ct]['route_id']
-        ag_route_name_fetch = cur.execute("SELECT routeNAME FROM TEST_ROUTES WHERE routeID = ?",
-                                        (curr_routeID,)).fetchone()
-        ag_route_str = ag_route_name_fetch[0]
-
-        stop_list = []
-        arrive_list = []
-        stop_name = []
-        lat_long = []
-
-        for idx1 in range(len(resp_vehicles['data']['1323'][ct]['arrival_estimates'])):
-            stop_list.append(resp_vehicles['data']['1323'][ct]['arrival_estimates'][idx1]['stop_id'])
-            arrive_list.append(resp_vehicles['data']['1323'][ct]['arrival_estimates'][idx1]['arrival_at'])
-            stop_string = ' '.join(stop_list)
-            arrive_string = ' '.join(arrive_list)
-
-            curr_stop_id = resp_vehicles['data']['1323'][ct]['arrival_estimates'][idx1]['stop_id']
-            curr_stop_name_tup = cur.execute("SELECT stopNAME FROM STOPS WHERE stopID = ?",
-                                           (curr_stop_id,)).fetchone()
-            curr_stop_name = curr_stop_name_tup[0]
-            stop_name.append(curr_stop_name)
-            stop_name_str = ', '.join(stop_name)
-
-            lat = resp_vehicles['data']['1323'][ct]['location']['lat']
-            long = resp_vehicles['data']['1323'][ct]['location']['lng']
-
-            lat = str(lat)
-            lon = str(lon)
-            lat_long = lat + ',' + lon
-
-        if len(resp_vehicles['data']['1323'][ct]['arrival_estimates']) >= 1:
-            cur.execute(
-                "INSERT OR REPLACE INTO TEST_TABLE VALUES (:ID, :vehicleID, :capacity, :routeNAME, :routeID, :stopName, :nextSTOP, :arrivals, :lat_long)",
-                {'ID': ID_idx,
-                 'vehicleID': resp_vehicles['data']['1323'][ct]['call_name'],
-                 'capacity': capacity,
-                 'routeNAME': ag_route_str,
-                 'routeID': resp_vehicles['data']['1323'][ct]['route_id'],
-                 'stopName': stop_name_str,
-                 'nextSTOP': stop_string,
-                 'arrivals': arrive_string,
-                 'lat_long': lat_long})
-        else:
-            cur.execute(
-                "INSERT OR REPLACE INTO TEST_TABLE VALUES (:ID, :vehicleID, :capacity, :routeNAME, :routeID, :stopName, :nextSTOP, :arrivals, :lat_long)",
-                {'ID': ID_idx,
-                 'vehicleID': resp_vehicles['data']['1323'][ct]['call_name'],
-                 'capacity': capacity,
-                 'routeNAME': ag_route_str,
-                 'routeID': resp_vehicles['data']['1323'][ct]['route_id'],
-                 'stopName': 'n/a',
-                 'nextSTOP': 'n/a',
-                 'arrivals': 'n/a',
-                 'lat_long': 'n/a'})
-
-        ID_idx = ID_idx + 1
-        con.commit()  
-	
+def student_info(netid):
+	student = get_student(netid)
+	if student == None:
+		return ("No Student Found", "XXX-XXX-XXXX", "XXXX", {}, {})
+	phone = student[3]
+	grad = student[5]
+	b, d, o, _ = get_buslist(netid)
+	busses = {b[i]:[d[i],o[i]] for i in range(len(b))}
+	contacts = contact_tracing(netid)
+	return (netid, phone, grad, busses, contacts)
