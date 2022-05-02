@@ -1529,5 +1529,5 @@ def studentRecord():
 	return render_template("studentRecord.html", covid=covid, student=student, phone=phone, grad=grad, ride_info=ride_info, contact_info=contact_info)
 
 if __name__ == "__main__":
-	app.run(host='172.31.131.201', debug=True)
-	#app.run(debug=True)
+	#app.run(host='172.31.131.201', debug=True)
+	app.run(debug=True)
