@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+h1{font-family:Arial, sans-serif;color:#e10e0e;background-color:#ffffff;}
+* {box-sizing: border-box}
+
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+button {
+  background-color: #8b0000;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+
+
+button:hover {
+  opacity:1;
+}
+
+.exitbtn {
+  float: ;
+  width: 50%;
+}
+
+.container {
+  padding: 16px;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+@media screen and (max-width: 300px) {
+  .exitbtn {
+     width: 100%;
+  }
+}
+</style>
+<body>
+
+<form action="{{ url_for('exit_bus') }}" method="post" style="border:1px solid #ccc">
+  <div class="container">
+    <h1>Exit Record</h1>
+    <p>Please document when you have left the vehicle.</p>
+    <hr>
+
+    <div class="clearfix">
+    <button type="submit" name="exit" value="undo">UNDO</button>
+    <button type="submit" name="exit" value="exit">EXIT</button></a>
+    </div>
+  </div>
+</form>
+
+</body>
+</html>

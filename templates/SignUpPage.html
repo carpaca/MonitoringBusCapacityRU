@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+h1{font-family:Arial, sans-serif;color:#e10e0e;background-color:#ffffff;}
+* {box-sizing: border-box}
+
+input[type=text], input[type=tel], input[type=number], input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+input[type=text]:focus, input[type=tel]:focus, input[type=number]:focus, input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+button {
+  background-color: #8b0000;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+
+button:hover {
+  opacity:1;
+}
+
+.signupbtn {
+  float: ;
+  width: 50%;
+}
+
+.container {
+  padding: 16px;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+@media screen and (max-width: 300px) {
+  .signupbtn {
+     width: 100%;
+  }
+}
+</style>
+<body>
+
+<form action="{{ url_for('signup') }}" method="post" style="border:1px solid #ccc">
+  <div class="container">
+    <h1>Sign Up Page</h1>
+    <p>Please fill in this form to create an account.</p>
+    <hr>
+
+    <label for="NET_ID"><b>Net ID:</b></label>
+    <input type="text" placeholder="Enter Net ID" name="NET_ID" required>
+         
+     <label for="phone_no"><b>Phone Number:</b></label>
+     <input type="tel" onkeyup="addHyphen(this)" placeholder="Enter Phone Number" id="phone" name="phone_no"
+       pattern="[0-9]{3}[0-9]{3}[0-9]{4}"
+       required>
+
+    
+    <label for="year"><b>Year of Graduation:</b></label>
+    <input type="number" placeholder="YYYY" min="2022" max="2100" name="grad">
+    
+     <label for="psw"><b>Password:</b></label>
+     <input type="password" placeholder="Enter Password" name="psw" required>
+
+    <label for="psw-repeat"><b>Repeat Password:</b></label>
+    <input type="password" placeholder="Repeat Password" name="psw-repeat" required> 
+    
+    <label for="identity">Are you a student or an administrator?</label>
+    <select name="identity" id="identity">
+    <option value="student">Student</option>
+    <option value="administrator">Administrator</option>
+</select>
+    </label>
+
+    <div class="clearfix">
+    <button type="submit" class="signupbtn">Sign Up</button>
+    </div>
+  </div>
+</form>
+
+</body>
+</html>
+

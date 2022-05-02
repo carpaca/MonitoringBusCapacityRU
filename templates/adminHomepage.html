@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+h1{font-family:Arial, sans-serif;color:#e10e0e;background-color:#ffffff;}
+* {box-sizing: border-box}
+
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+.container {
+  padding: 16px;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+@media screen and (max-width: 300px) {
+ }
+</style>
+<body>
+
+<form action="{{ url_for('admin_homepage') }}" method="post" style="border:1px solid #ccc">
+  <div class="container">
+    <h1>Student Record Access</h1>
+    <p>Please enter Net ID for the student's record you wish to view.</p>
+    <hr>
+    
+    <label for="NET_ID"><b>Net ID: </b></label>
+    <input type="text" placeholder="Enter Net ID" name="NET_ID" required>
+    <button type="submit">SUBMIT</button>
+  </div>
+</form>
+
+</body>
+</html>
+

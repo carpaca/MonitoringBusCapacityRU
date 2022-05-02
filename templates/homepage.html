@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript">
+function gotopage(selval){
+var value = selval.options[selval.selectedIndex].value;
+window.location.href=value;
+}
+  </script>
+<title>
+</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {background-color:#ffffff;background-repeat:no-repeat;background-position:top left;background-attachment:fixed;}
+h1{font-family:Arial, sans-serif;color:#e70808;background-color:#ffffff;}
+p {font-family:Georgia, serif;font-size:14px;font-style:normal;font-weight:normal;color:#000000;background-color:#ffffff;}
+</style>
+</head>
+<body>
+<h1>Rutgers NB - Bus Monitoring Application</h1>
+
+<p>
+<fieldset>
+  <label for="buses">View bus routes for:</label>
+  <select onchange="gotopage(this)">
+  <option value=" http://172.31.131.201:5000/">--</option>
+  <option value=" http://172.31.131.201:5000/A-bus">A</option>
+  <option value=" http://172.31.131.201:5000/B-bus">B</option>
+  <option value=" http://172.31.131.201:5000/C-bus">C</option>
+  <option value=" http://172.31.131.201:5000/EE-bus">EE</option>
+  <option value=" http://172.31.131.201:5000/F-bus">F</option>
+  <option value=" http://172.31.131.201:5000/H-bus">H</option>
+  <option value=" http://172.31.131.201:5000/LX-bus">LX</option>
+  <option value=" http://172.31.131.201:5000/REXB-bus">REXB</option>
+  <option value=" http://172.31.131.201:5000/REXL-bus">REXL</option>
+  <option value=" http://172.31.131.201:5000/Weekend-1-bus">Weekend 1</option>
+  <option value=" http://172.31.131.201:5000/Weekend-2-bus">Weekend 2</option>
+  </select>
+</fieldset>
+</p>
+<a href="{{ url_for('login') }}" ><button type="button">LOGOUT</button></a>
+</body>
+</fieldset>
+</p>
+</body>
+</html>

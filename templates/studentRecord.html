@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+body {background-color:#ffffff;background-repeat:no-repeat;background-position:top left;background-attachment:fixed;}
+h1{font-family:Arial, sans-serif;color:#e10e0e;background-color:#ffffff;}
+h2{font-family:Arial, sans-serif;color:#e10e0e;background-color:#ffffff;}
+h3{font-family:Arial, sans-serif;color:#e10e0e;background-color:#ffffff;}
+p {font-family:Georgia, serif;font-size:14px;font-style:normal;font-weight:normal;color:#000000;background-color:#ffffff;}
+</style>
+</head>
+ 
+<body>
+<h1><b>Student Information:</b></h1>
+<table style="width:40%">
+  <tr>
+    <th>Name</th>
+    <td>{{student}}</td>
+  </tr>
+  <tr>
+    <th>Phone Number</th>
+    <td>{{phone}}</td>
+  </tr>
+  <tr>
+    <th>Year of Graduation</th>
+    <td>{{grad}}</td>
+  </tr>
+  <tr>
+    <th>COVID-19</th>
+    <td>{{covid}}</td>
+  </tr>
+</table>
+</table>
+  
+<h2><b>Ride History:</b></h2>
+<table style="width:40%">
+  <tr>
+    <th>Bus ID</th>
+    <th>Date of Use</th>
+    <th>Time of Use</th>
+  </tr>
+{% for item in ride_info %}
+  <tr>
+    <td>{{ item.vehicle }}</td>
+    <td>{{ item.date }}</td>
+    <td>{{ item.time }}</td>
+  </tr>
+{% endfor %}
+
+</table>
+  
+<h3><b>Students on Same Bus(es):</b></h3>
+<table style="width:60%">
+  <tr>
+    <th>Student Net ID</th>
+    <th>Date of Contact</th>
+    <th>Bus ID</th>
+  </tr>
+{% for item in contact_info %}
+  <tr>
+    <td>{{ item.student }}</td>
+    <td>{{ item.date }}</td>
+    <td>{{ item.vehicle_num }}</td>
+  </tr>
+  {% endfor %}
+
+
+</table>
+</body>
+</html>
+
